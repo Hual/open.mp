@@ -87,6 +87,7 @@ public:
 			playerFromRakIndex[playerIndex] = nullptr;
 		}
 		playerRemoteSystem[peer.getID()] = nullptr;
+		core->printLn("[RakNet] Kicking peer %.*s {%p} with index %hu and ID %i", PRINT_VIEW(peer.getName()), &peer, playerIndex, peer.getID());
 		rakNetServer.Kick(rid);
 	}
 
