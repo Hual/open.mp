@@ -364,6 +364,7 @@ IPlayer* RakNetLegacyNetwork::OnPeerConnect(RakNet::RPCParameters* rpcParams, bo
 	}
 
 	playerFromRakIndex[rpcParams->senderIndex] = newConnectionResult.second;
+	core->printLn("[RakNet] Connecting peer %.*s {%p} with index %hu and ID %i", PRINT_VIEW(newConnectionResult.second->getName()), newConnectionResult.second, rpcParams->senderIndex, newConnectionResult.second->getID());
 
 	return newConnectionResult.second;
 }
@@ -439,6 +440,8 @@ void RakNetLegacyNetwork::OnPlayerConnect(RakNet::RPCParameters* rpcParams, void
 				return handler->onReceiveRPC(*newPeer, NetCode::RPC::PlayerConnect::PacketID, bs);
 			}))
 	{
+		network->core->printLn("[RakNet] Refused connection for player %.*s {%p} with index %hu and ID %i", PRINT_VIEW(newPeer->getName()), newPeer, rpcParams->senderIndex, newPeer->getID());
+		// TODO: clean up playerFromRakIndex here?
 		return;
 	}
 
@@ -450,12 +453,16 @@ void RakNetLegacyNetwork::OnPlayerConnect(RakNet::RPCParameters* rpcParams, void
 				return handler->onReceive(*newPeer, bs);
 			}))
 	{
+		network->core->printLn("[RakNet] Refused connection for player %.*s {%p} with index %hu and ID %i", PRINT_VIEW(newPeer->getName()), newPeer, rpcParams->senderIndex, newPeer->getID());
+		// TODO: clean up playerFromRakIndex here?
 		return;
 	}
 
 	network->networkEventDispatcher.dispatch(&NetworkEventHandler::onPeerConnect, *newPeer);
 	network->playerRemoteSystem[newPeer->getID()] = remoteSystem;
 	remoteSystem->isLogon = true;
+
+	network->core->printLn("[RakNet] Logged in player %.*s {%p} with index %hu and ID %i", PRINT_VIEW(newPeer->getName()), newPeer, rpcParams->senderIndex, newPeer->getID());
 }
 
 void RakNetLegacyNetwork::OnNPCConnect(RakNet::RPCParameters* rpcParams, void* extra)
@@ -513,6 +520,8 @@ void RakNetLegacyNetwork::OnRakNetDisconnect(RakNet::PlayerIndex rid, PeerDiscon
 	{
 		return;
 	}
+
+	core->printLn("[RakNet] Disconnecting player %.*s {%p} with index %hu and ID %i", PRINT_VIEW(player->getName()), player, rid, player->getID());
 
 	playerFromRakIndex[rid] = nullptr;
 	playerRemoteSystem[player->getID()] = nullptr;

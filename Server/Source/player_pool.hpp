@@ -16,7 +16,7 @@ struct PlayerPool final : public IPlayerPool, public NetworkEventHandler, public
 {
 	ICore& core;
 	const FlatPtrHashSet<INetwork>& networks;
-	PoolStorage<Player, IPlayer, 0, PLAYER_POOL_SIZE> storage;
+	DynamicPoolStorage<Player, IPlayer, 0, PLAYER_POOL_SIZE> storage;
 	FlatPtrHashSet<IPlayer> playerList;
 	FlatPtrHashSet<IPlayer> botList;
 	DefaultEventDispatcher<PlayerSpawnEventHandler> playerSpawnDispatcher;

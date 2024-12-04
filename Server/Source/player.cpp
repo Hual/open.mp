@@ -374,3 +374,77 @@ void Player::ban(StringView reason)
 	pool_.core.getConfig().writeBans();
 	kick();
 }
+
+Player::Player(PlayerPool& pool, const PeerNetworkData& netData, const PeerRequestParams& params, bool* allAnimationLibraries, bool* validateAnimations, bool* allowInteriorWeapons, IFixesComponent* fixesComponent)
+	: pool_(pool)
+	, netData_(netData)
+	, version_(params.version)
+	, versionName_(params.versionName)
+	, pos_(0.0f, 0.0f, 0.0f)
+	, cameraPos_(0.f, 0.f, 0.f)
+	, cameraLookAt_(0.f, 0.f, 0.f)
+	, name_(params.name)
+	, serial_(params.serial)
+	, virtualWorld_(0)
+	, score_(0)
+	, fightingStyle_(PlayerFightingStyle_Normal)
+	, state_(PlayerState_None)
+	, controllable_(true)
+	, clockToggled_(false)
+	, health_(100.0f)
+	, armour_(0.0f)
+	, keys_ { 0u, 0, 0 }
+	, velocity_(0.0f, 0.0f, 0.0f)
+	, surfing_ { PlayerSurfingData::Type::None }
+	, armedWeapon_(0)
+	, rotTransform_(0.f, 0.f, 0.f)
+	, lastPlayedSound_(0)
+	, money_(0)
+	, time_(0)
+	, shopName_()
+	, drunkLevel_(0)
+	, lastPlayedAudio_()
+	, interior_(0)
+	, wantedLevel_(0)
+	, weather_(0)
+	, worldBounds_(MAX_WORLD_BOUNDS, MIN_WORLD_BOUNDS, MAX_WORLD_BOUNDS, MIN_WORLD_BOUNDS)
+	, enableCameraTargeting_(false)
+	, widescreen_(0)
+	, numStreamed_(0)
+	, lastMarkerUpdate_()
+	, cameraTargetPlayer_(INVALID_PLAYER_ID)
+	, cameraTargetVehicle_(INVALID_VEHICLE_ID)
+	, cameraTargetObject_(INVALID_OBJECT_ID)
+	, cameraTargetActor_(INVALID_ACTOR_ID)
+	, targetPlayer_(INVALID_PLAYER_ID)
+	, targetActor_(INVALID_ACTOR_ID)
+	, chatBubbleExpiration_(Time::now())
+	, isBot_(params.bot)
+	, toSpawn_(false)
+	, lastGameTimeUpdate_()
+	, spectateData_({ false, INVALID_PLAYER_ID, PlayerSpectateData::ESpectateType::None })
+	, gravity_(0.0f)
+	, ghostMode_(false)
+	, defaultObjectsRemoved_(0)
+	, allowWeapons_(true)
+	, allowTeleport_(false)
+	, isUsingOfficialClient_(params.isUsingOfficialClient)
+	, primarySyncUpdateType_(PrimarySyncUpdateType::None)
+	, secondarySyncUpdateType_(0)
+	, lastScoresAndPings_(Time::now())
+	, kicked_(false)
+	, allAnimationLibraries_(allAnimationLibraries)
+	, validateAnimations_(validateAnimations)
+	, allowInteriorWeapons_(allowInteriorWeapons)
+	, fixesComponent_(fixesComponent)
+{
+	weapons_.fill({ 0, 0 });
+	skillLevels_.fill(MAX_SKILL_LEVEL);
+
+	pool_.core.printLn("[Player] Creating player %.*s {%p}", PRINT_VIEW(name_), this);
+}
+
+Player::~Player()
+{
+	pool_.core.printLn("[Player] Destroying player %.*s {%p} with ID %i", PRINT_VIEW(name_), this, poolID);
+}
