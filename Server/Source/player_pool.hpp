@@ -2130,6 +2130,7 @@ struct PlayerPool final : public IPlayerPool, public NetworkEventHandler, public
 			// If a player is kicked, disconnect them ASAP
 			if (player->kicked_)
 			{
+				core.printLn("[RakNet] Clearing kicked peer %.*s {%p} with ID %i", PRINT_VIEW(player->getName()), player, player->getID());
 				clearPlayer(*player, PeerDisconnectReason_Kicked);
 				it = storage.remove(player->poolID).second;
 				continue;
