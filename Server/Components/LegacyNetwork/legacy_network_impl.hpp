@@ -82,11 +82,6 @@ public:
 		const RakNet::PlayerID rid { unsigned(nid.address.v4), nid.port };
 
 		const int playerIndex = rakNetServer.GetIndexFromPlayerID(rid);
-		if (playerIndex >= 0 && playerIndex < PLAYER_POOL_SIZE)
-		{
-			playerFromRakIndex[playerIndex] = nullptr;
-		}
-		playerRemoteSystem[peer.getID()] = nullptr;
 		core->printLn("[RakNet] Kicking peer %.*s {%p} with index %i and ID %i", PRINT_VIEW(peer.getName()), &peer, playerIndex, peer.getID());
 		rakNetServer.Kick(rid);
 	}

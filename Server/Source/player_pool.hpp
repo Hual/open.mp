@@ -1831,6 +1831,10 @@ struct PlayerPool final : public IPlayerPool, public NetworkEventHandler, public
 	void onPeerDisconnect(IPlayer& peer, PeerDisconnectReason reason) override
 	{
 		Player& player = static_cast<Player&>(peer);
+		if (player.kicked_)
+		{
+			reason = PeerDisconnectReason::PeerDisconnectReason_Kicked;
+		}
 		clearPlayer(player, reason);
 		storage.remove(player.poolID);
 	}
@@ -2126,16 +2130,6 @@ struct PlayerPool final : public IPlayerPool, public NetworkEventHandler, public
 		for (auto it = storage.entries().begin(); it != storage.entries().end();)
 		{
 			Player* player = static_cast<Player*>(*it);
-
-			// If a player is kicked, disconnect them ASAP
-			if (player->kicked_)
-			{
-				core.printLn("[RakNet] Clearing kicked peer %.*s {%p} with ID %i", PRINT_VIEW(player->getName()), player, player->getID());
-				clearPlayer(*player, PeerDisconnectReason_Kicked);
-				it = storage.remove(player->poolID).second;
-				continue;
-			}
-
 			if (!player->spectateData_.spectating)
 			{
 				switch (player->primarySyncUpdateType_)
